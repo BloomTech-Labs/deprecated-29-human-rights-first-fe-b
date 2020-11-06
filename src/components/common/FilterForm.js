@@ -33,7 +33,7 @@ export default function FiltersForm() {
 
   const dispatch = useDispatch();
   const [incidentsState, setIncidentsState] = useState(initialIncidents);
-
+  // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
   });
@@ -50,6 +50,7 @@ export default function FiltersForm() {
 
   const sources = ['One', 'Two', 'Three', 'Four'];
 
+  // This changes the incident name to match the keys of the initialIncidents object
   const getKeyFromName = name => {
     let key = [...name].filter(char => char !== ' ');
     key[0] = key[0].toLowerCase();
@@ -57,6 +58,12 @@ export default function FiltersForm() {
 
     return key;
   };
+  // const checkboxChange = (name, isChecked) => {
+  //   setIncidentsState({
+  //     ...incidentsState,
+  //     [name]: isChecked
+  //   })
+  // }
 
   useEffect(() => {
     dispatch(updateFilters({ incidents: incidentsState }));
@@ -65,7 +72,11 @@ export default function FiltersForm() {
   return (
     <div className="filter-box">
       <div className="search-bars">
+        {/* Waiting on data from backend to implement rangePicker
+        onChange needs to filter incidents where date >= selectedDate1 and date <= selectedDate2 
+        */}
         <RangePicker />
+
         <Select
           allowClear
           showSearch // useful to not have to scroll through 50+ items to find what you're looking for
@@ -83,7 +94,8 @@ export default function FiltersForm() {
           onSearch={value => dispatch(updateFilters({ zipCode: value }))}
           style={{ width: 150 }}
         />
-        <Button type="link" onClick={() => console.log('reset filters')}>
+        {/* How can we get the reset to check all boxes? */}
+        <Button type="link" onClick={() => setIncidentsState(initialIncidents)}>
           Reset Filters
         </Button>
       </div>
@@ -91,30 +103,49 @@ export default function FiltersForm() {
         <div className="incident-filters">
           <Title level={5}>Incident Type</Title>
           <div className="checkboxes">
-            <Checkbox.Group style={{ width: '100%' }} defaultValue={incidents}>
-              <Row>
-                {incidents.map((incident, id) => {
-                  return (
-                    <Col span={6}>
-                      <Checkbox
-                        value={incident}
-                        defaultChecked
-                        onChange={e => {
-                          let incidentKey = getKeyFromName(incident);
+            {/* <Checkbox.Group
+              style={{ width: '100%' }}
+              options={incidents}
+              defaultValue={incidents}
+              name={incidents}
+              onChange={e => {
+                console.log(e.target.name);
+              }}
+              // <- This is making all the checboxes start checked, doesn't affect pointer rendering
+            > */}
+            {/* Either map through incidents to render each with the grid, OR use the checkbox group, not both. */}
+            <Row>
+              {incidents.map((incident, id) => {
+                return (
+                  <Col span={6}>
+                    {/* <label>{incident}
+                    <input
+                    type = "checkbox"
+                    name = {incident}
+                    checked = {incidentsState[getKeyFromName(incident)]}
+                    />
+                    </label> */}
+                    <Checkbox
+                      // value={incident}
+                      checked={incidentsState[getKeyFromName(incident)]}
+                      // defaultChecked={true}
+                      // defaultChecked="false" <- What is this doing? Box is checked with or without. Fix
+                      onChange={e => {
+                        let incidentKey = getKeyFromName(incident);
 
-                          setIncidentsState({
-                            ...incidentsState,
-                            [incidentKey]: e.target.checked,
-                          });
-                        }}
-                      >
-                        {incident}
-                      </Checkbox>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Checkbox.Group>
+                        setIncidentsState({
+                          ...incidentsState,
+                          [incidentKey]: e.target.checked,
+                        });
+                      }}
+                    >
+                      {incident}
+                    </Checkbox>
+                  </Col>
+                );
+              })}
+            </Row>
+            {/* </Checkbox.Group> */}
           </div>
         </div>
 
@@ -128,7 +159,7 @@ export default function FiltersForm() {
                     <Col span={12}>
                       <Checkbox
                         value={source}
-                        defaultChecked="true"
+                        // defaultChecked="true"
                         onChange={() => console.log({ source })}
                       >
                         {source}

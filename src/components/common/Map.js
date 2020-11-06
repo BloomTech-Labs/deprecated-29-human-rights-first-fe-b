@@ -22,13 +22,16 @@ const Map = () => {
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
+  // console.log(incidentType, events);
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // -> showcase our data instantly from the api call
-    dispatch(fetchIncidents());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   // -> showcase our data instantly from the api call
+  //   dispatch(fetchIncidents());
+  // }, [dispatch]);
+
+  // ^^ This is doing NOTHING
 
   // ----------- map
 
@@ -122,7 +125,7 @@ const Map = () => {
 
     setUpdatedIncidents(filteredIncidents);
   }, [incidentType]);
-  console.log(updatedIncidents);
+  // console.log(updatedIncidents);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;
