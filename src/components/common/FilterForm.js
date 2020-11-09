@@ -58,13 +58,6 @@ export default function FiltersForm() {
 
     return key;
   };
-  // const checkboxChange = (name, isChecked) => {
-  //   setIncidentsState({
-  //     ...incidentsState,
-  //     [name]: isChecked
-  //   })
-  // }
-
   useEffect(() => {
     dispatch(updateFilters({ incidents: incidentsState }));
   }, [dispatch, incidentsState]);
@@ -103,33 +96,12 @@ export default function FiltersForm() {
         <div className="incident-filters">
           <Title level={5}>Incident Type</Title>
           <div className="checkboxes">
-            {/* <Checkbox.Group
-              style={{ width: '100%' }}
-              options={incidents}
-              defaultValue={incidents}
-              name={incidents}
-              onChange={e => {
-                console.log(e.target.name);
-              }}
-              // <- This is making all the checboxes start checked, doesn't affect pointer rendering
-            > */}
-            {/* Either map through incidents to render each with the grid, OR use the checkbox group, not both. */}
             <Row>
               {incidents.map((incident, id) => {
                 return (
                   <Col span={6}>
-                    {/* <label>{incident}
-                    <input
-                    type = "checkbox"
-                    name = {incident}
-                    checked = {incidentsState[getKeyFromName(incident)]}
-                    />
-                    </label> */}
                     <Checkbox
-                      // value={incident}
-                      checked={incidentsState[getKeyFromName(incident)]}
-                      // defaultChecked={true}
-                      // defaultChecked="false" <- What is this doing? Box is checked with or without. Fix
+                      checked={incidentsState[getKeyFromName(incident)]} // Control the "checked" attribute with the boolean value of the state.
                       onChange={e => {
                         let incidentKey = getKeyFromName(incident);
 
@@ -145,7 +117,6 @@ export default function FiltersForm() {
                 );
               })}
             </Row>
-            {/* </Checkbox.Group> */}
           </div>
         </div>
 
@@ -159,7 +130,6 @@ export default function FiltersForm() {
                     <Col span={12}>
                       <Checkbox
                         value={source}
-                        // defaultChecked="true"
                         onChange={() => console.log({ source })}
                       >
                         {source}
