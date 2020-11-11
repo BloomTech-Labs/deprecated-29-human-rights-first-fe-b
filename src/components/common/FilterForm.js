@@ -22,16 +22,6 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
-  // const initialIncidents = {
-  //   energyDevices: true,
-  //   soft: true,
-  //   hard: true,
-  //   projectiles: true,
-  //   chemical: true,
-  //   presence: true,
-  //   other: true,
-  // };
-
   const dispatch = useDispatch();
   const [incidentsState, stateName, zipCode] = useSelector(state => [
     state.filters.incidents,
@@ -39,7 +29,6 @@ export default function FiltersForm() {
     state.filters.zipCode,
   ]);
   console.log(incidentsState);
-  // const [incidentsState, setIncidentsState] = useState(initialIncidents);
   // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
