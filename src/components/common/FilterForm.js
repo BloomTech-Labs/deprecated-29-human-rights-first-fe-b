@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Select,
   Input,
@@ -14,6 +14,7 @@ import { updateFilters } from '../../state/actions/';
 import 'antd/dist/antd.css';
 import './FilterForm.css';
 import statesDB from '../../database/states.json';
+import { initialIncidents } from '../../state/reducers/filtersReducer';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -21,18 +22,24 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
-  const initialIncidents = {
-    energyDevices: true,
-    soft: true,
-    hard: true,
-    projectiles: true,
-    chemical: true,
-    presence: true,
-    other: true,
-  };
+  // const initialIncidents = {
+  //   energyDevices: true,
+  //   soft: true,
+  //   hard: true,
+  //   projectiles: true,
+  //   chemical: true,
+  //   presence: true,
+  //   other: true,
+  // };
 
   const dispatch = useDispatch();
-  const [incidentsState, setIncidentsState] = useState(initialIncidents);
+  const [incidentsState, stateName, zipCode] = useSelector(state => [
+    state.filters.incidents,
+    state.filters.stateName,
+    state.filters.zipCode,
+  ]);
+  console.log(incidentsState);
+  // const [incidentsState, setIncidentsState] = useState(initialIncidents);
   // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
@@ -58,17 +65,13 @@ export default function FiltersForm() {
 
     return key;
   };
-  useEffect(() => {
-    dispatch(updateFilters({ incidents: incidentsState }));
-  }, [dispatch, incidentsState]);
-
   return (
     <div className="filter-box">
       <div className="search-bars">
         {/* Waiting on data from backend to implement rangePicker
         onChange needs to filter incidents where date >= selectedDate1 and date <= selectedDate2 
         */}
-        <RangePicker />
+        <RangePicker allowClear />
 
         <Select
           allowClear
@@ -76,6 +79,7 @@ export default function FiltersForm() {
           onSelect={stateName => dispatch(updateFilters({ stateName }))}
           placeholder="Select a State"
           style={{ width: 150 }}
+          value={stateName}
         >
           {filteredStates.map(state => {
             return <Option value={state.state}>{state.state}</Option>;
@@ -84,11 +88,18 @@ export default function FiltersForm() {
         <Search
           placeholder="Zip Code"
           allowClear
-          onSearch={value => dispatch(updateFilters({ zipCode: value }))}
+          // onSearch={(value, e) => dispatch(updateFilters({ zipCode: value }))}
           style={{ width: 150 }}
+          // onChange={e => dispatch(updateFilters({ zipCode: e.target.value }))}
+          // value={zipCode}
         />
-        {/* How can we get the reset to check all boxes? */}
-        <Button type="link" onClick={() => setIncidentsState(initialIncidents)}>
+        <Button
+          type="link"
+          onClick={() => {
+            dispatch(updateFilters({ incidents: initialIncidents }));
+            dispatch(updateFilters({ stateName: null, zipCode: null }));
+          }}
+        >
           Reset Filters
         </Button>
       </div>
@@ -104,11 +115,14 @@ export default function FiltersForm() {
                       checked={incidentsState[getKeyFromName(incident)]} // Control the "checked" attribute with the boolean value of the state.
                       onChange={e => {
                         let incidentKey = getKeyFromName(incident);
-
-                        setIncidentsState({
-                          ...incidentsState,
-                          [incidentKey]: e.target.checked,
-                        });
+                        dispatch(
+                          updateFilters({
+                            incidents: {
+                              ...incidentsState,
+                              [incidentKey]: e.target.checked,
+                            },
+                          })
+                        );
                       }}
                     >
                       {incident}
@@ -119,6 +133,8 @@ export default function FiltersForm() {
             </Row>
           </div>
         </div>
+
+        {/* Sources are not yet implemented */}
 
         <div className="source-filters">
           <Title level={5}>Source Type</Title>

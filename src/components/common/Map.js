@@ -22,6 +22,7 @@ const Map = () => {
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
+  console.log(incidentType, events);
   // console.log(incidentType, events);
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
   const dispatch = useDispatch();

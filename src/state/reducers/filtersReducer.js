@@ -1,6 +1,6 @@
 import { UPDATE_FILTERS } from '../actions/';
 
-const initialIncidents = {
+export const initialIncidents = {
   energyDevices: true,
   soft: true,
   hard: true,
@@ -11,8 +11,10 @@ const initialIncidents = {
 };
 
 const initialState = {
-  stateName: '',
-  zipCode: '',
+  stateName: null,
+  zipCode: null,
+  startDate: '',
+  endDate: '',
   incidents: initialIncidents,
 };
 
