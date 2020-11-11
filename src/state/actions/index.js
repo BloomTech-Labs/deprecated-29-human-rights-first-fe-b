@@ -13,12 +13,14 @@ export const updateFilters = filters => {
 };
 
 export const fetchIncidents = () => dispatch => {
-  axios
-    .get(`https://labs27-d-hrf-api.herokuapp.com/incidents/dummy`)
-    .then(res => {
-      dispatch({ type: FETCH_INCIDENTS, payload: res.data });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  return;
+  // axios
+  //   .get(`https://labs27-d-hrf-api.herokuapp.com/incidents/dummy`)
+  //   .then(res => {
+  //     return { type: FETCH_INCIDENTS, payload: res.data };
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 };
+// ^^ This is doing NOTHING

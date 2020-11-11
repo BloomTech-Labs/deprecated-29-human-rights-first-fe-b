@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Select,
   Input,
@@ -14,6 +14,7 @@ import { updateFilters } from '../../state/actions/';
 import 'antd/dist/antd.css';
 import './FilterForm.css';
 import statesDB from '../../database/states.json';
+import { initialIncidents } from '../../state/reducers/filtersReducer';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -21,19 +22,14 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
-  const initialIncidents = {
-    energyDevices: true,
-    soft: true,
-    hard: true,
-    projectiles: true,
-    chemical: true,
-    presence: true,
-    other: true,
-  };
-
   const dispatch = useDispatch();
-  const [incidentsState, setIncidentsState] = useState(initialIncidents);
-
+  const [incidentsState, stateName, zipCode] = useSelector(state => [
+    state.filters.incidents,
+    state.filters.stateName,
+    state.filters.zipCode,
+  ]);
+  console.log(incidentsState);
+  // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
   });
@@ -50,6 +46,7 @@ export default function FiltersForm() {
 
   const sources = ['One', 'Two', 'Three', 'Four'];
 
+  // This changes the incident name to match the keys of the initialIncidents object
   const getKeyFromName = name => {
     let key = [...name].filter(char => char !== ' ');
     key[0] = key[0].toLowerCase();
@@ -57,21 +54,21 @@ export default function FiltersForm() {
 
     return key;
   };
-
-  useEffect(() => {
-    dispatch(updateFilters({ incidents: incidentsState }));
-  }, [dispatch, incidentsState]);
-
   return (
     <div className="filter-box">
       <div className="search-bars">
-        <RangePicker />
+        {/* Waiting on data from backend to implement rangePicker
+        onChange needs to filter incidents where date >= selectedDate1 and date <= selectedDate2 
+        */}
+        <RangePicker allowClear />
+
         <Select
           allowClear
           showSearch // useful to not have to scroll through 50+ items to find what you're looking for
           onSelect={stateName => dispatch(updateFilters({ stateName }))}
           placeholder="Select a State"
           style={{ width: 150 }}
+          value={stateName}
         >
           {filteredStates.map(state => {
             return <Option value={state.state}>{state.state}</Option>;
@@ -80,10 +77,18 @@ export default function FiltersForm() {
         <Search
           placeholder="Zip Code"
           allowClear
-          onSearch={value => dispatch(updateFilters({ zipCode: value }))}
+          // onSearch={(value, e) => dispatch(updateFilters({ zipCode: value }))}
           style={{ width: 150 }}
+          // onChange={e => dispatch(updateFilters({ zipCode: e.target.value }))}
+          // value={zipCode}
         />
-        <Button type="link" onClick={() => console.log('reset filters')}>
+        <Button
+          type="link"
+          onClick={() => {
+            dispatch(updateFilters({ incidents: initialIncidents }));
+            dispatch(updateFilters({ stateName: null, zipCode: null }));
+          }}
+        >
           Reset Filters
         </Button>
       </div>
@@ -91,32 +96,34 @@ export default function FiltersForm() {
         <div className="incident-filters">
           <Title level={5}>Incident Type</Title>
           <div className="checkboxes">
-            <Checkbox.Group style={{ width: '100%' }} defaultValue={incidents}>
-              <Row>
-                {incidents.map((incident, id) => {
-                  return (
-                    <Col span={6}>
-                      <Checkbox
-                        value={incident}
-                        defaultChecked
-                        onChange={e => {
-                          let incidentKey = getKeyFromName(incident);
-
-                          setIncidentsState({
-                            ...incidentsState,
-                            [incidentKey]: e.target.checked,
-                          });
-                        }}
-                      >
-                        {incident}
-                      </Checkbox>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Checkbox.Group>
+            <Row>
+              {incidents.map((incident, id) => {
+                return (
+                  <Col span={6}>
+                    <Checkbox
+                      checked={incidentsState[getKeyFromName(incident)]} // Control the "checked" attribute with the boolean value of the state.
+                      onChange={e => {
+                        let incidentKey = getKeyFromName(incident);
+                        dispatch(
+                          updateFilters({
+                            incidents: {
+                              ...incidentsState,
+                              [incidentKey]: e.target.checked,
+                            },
+                          })
+                        );
+                      }}
+                    >
+                      {incident}
+                    </Checkbox>
+                  </Col>
+                );
+              })}
+            </Row>
           </div>
         </div>
+
+        {/* Sources are not yet implemented */}
 
         <div className="source-filters">
           <Title level={5}>Source Type</Title>
@@ -128,7 +135,6 @@ export default function FiltersForm() {
                     <Col span={12}>
                       <Checkbox
                         value={source}
-                        defaultChecked="true"
                         onChange={() => console.log({ source })}
                       >
                         {source}
