@@ -43,11 +43,12 @@ const Map = () => {
 
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+  // creating this object renders the map
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
     center: [-95.712891, 37.09024], // starting position [lng, lat]
-    zoom: 2, // starting zoom
+    zoom: 0, // starting zoom
     maxBounds: bounds, // Sets bounds as max
   });
 
@@ -126,7 +127,7 @@ const Map = () => {
 
     setUpdatedIncidents(filteredIncidents);
   }, [incidentType]);
-  // console.log(updatedIncidents);
+  console.log(updatedIncidents);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;

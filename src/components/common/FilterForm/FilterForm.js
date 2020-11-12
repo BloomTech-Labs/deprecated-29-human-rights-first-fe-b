@@ -10,11 +10,12 @@ import {
   Row,
   Col,
 } from 'antd';
-import { updateFilters } from '../../state/actions/';
+import { updateFilters } from '../../../state/actions';
 import 'antd/dist/antd.css';
 import './FilterForm.css';
-import statesDB from '../../database/states.json';
-import { initialIncidents } from '../../state/reducers/filtersReducer';
+import statesDB from '../../../database/states.json';
+import { initialIncidents } from '../../../state/reducers/filtersReducer';
+import { incidents, sources } from './assets';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -22,40 +23,17 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
-  // const initialIncidents = {
-  //   energyDevices: true,
-  //   soft: true,
-  //   hard: true,
-  //   projectiles: true,
-  //   chemical: true,
-  //   presence: true,
-  //   other: true,
-  // };
-
   const dispatch = useDispatch();
-  const [incidentsState, stateName, zipCode] = useSelector(state => [
-    state.filters.incidents,
-    state.filters.stateName,
-    state.filters.zipCode,
+  const [incidentsState, stateName, zipCode] = useSelector(store => [
+    store.filters.incidents,
+    store.filters.stateName,
+    store.filters.zipCode,
   ]);
   console.log(incidentsState);
-  // const [incidentsState, setIncidentsState] = useState(initialIncidents);
   // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
   });
-
-  const incidents = [
-    'Energy Devices',
-    'Soft',
-    'Hard',
-    'Projectiles',
-    'Chemical',
-    'Presence',
-    'Other',
-  ];
-
-  const sources = ['One', 'Two', 'Three', 'Four'];
 
   // This changes the incident name to match the keys of the initialIncidents object
   const getKeyFromName = name => {
