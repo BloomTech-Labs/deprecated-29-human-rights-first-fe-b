@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import * as mapboxgl from 'mapbox-gl';
-import statesDB from '../../database/states.json';
+import statesDB from '../../../database/states.json';
 import { Button } from 'antd';
 import usZips from 'us-zips';
 import MapButtons from './MapButtons';
-import incidentsDB from '../../database/data2.json';
-import TwitterPopup from './TwitterPopup';
+import incidentsDB from '../../../database/data2.json';
+import TwitterPopup from '../TwitterPopup';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import myImg from '../../assets/police-badge.png';
-import myImg2 from '../../assets/police-helmet.png';
-import { fetchIncidents } from '../../state/actions';
+import { policeBadge, policeHelmet } from '../../../assets/';
+
+import { fetchIncidents } from '../../../state/actions';
 
 const Map = () => {
   // using a NYC API to get dummy data for display on the map
@@ -43,11 +43,12 @@ const Map = () => {
 
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+  // creating this object renders the map
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
     center: [-95.712891, 37.09024], // starting position [lng, lat]
-    zoom: 2, // starting zoom
+    zoom: 0, // starting zoom
     maxBounds: bounds, // Sets bounds as max
   });
 
@@ -126,7 +127,7 @@ const Map = () => {
 
     setUpdatedIncidents(filteredIncidents);
   }, [incidentType]);
-  // console.log(updatedIncidents);
+  console.log(updatedIncidents);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;
@@ -220,14 +221,14 @@ const Map = () => {
     // upload a custom icon image
     map.loadImage(
       // 'https://upload.wikimedia.org/wikipedia/commons/7/7c/201408_cat.png', // --> sample url
-      myImg,
+      policeBadge,
       function(error, image) {
         if (error) throw error;
-        map.addImage('cat', image);
+        map.addImage('badge', image);
       }
     );
 
-    map.loadImage(myImg2, function(error, image) {
+    map.loadImage(policeHelmet, function(error, image) {
       if (error) throw error;
       map.addImage('helmet', image);
     });

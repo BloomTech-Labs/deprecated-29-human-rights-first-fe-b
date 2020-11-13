@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 // import OldMap from './OldMap';
-import Map from '../common/Map';
-import Graph from '../common/Graph';
-import About from '../common/About';
+import Map from './Map';
+import Graph from './Graph';
+import About from './About';
 import FiltersForm from './FilterForm';
 import 'antd/dist/antd.css';
 import '../../styles/index.css';
 import { Tabs, Button, Popover } from 'antd';
+import NavBar from './NavBar';
 
-export const Loading = () => {
+export const App = () => {
   const { TabPane } = Tabs;
 
   const openFilters = (
@@ -24,6 +25,7 @@ export const Loading = () => {
 
   return (
     <div>
+      <NavBar />
       <main>
         <Tabs
           defaultActiveKey="1"

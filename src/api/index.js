@@ -1,3 +1,5 @@
+//Code is deprecated, consult readMe for more info.
+
 import axios from 'axios';
 
 // we will define a bunch of API calls here.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Result } from 'antd';
-import statesDB from '../../database/states.json';
+import statesDB from '../../../database/states.json';
 import { useSelector } from 'react-redux';
 import { WarningFilled } from '@ant-design/icons';
 
@@ -122,7 +122,7 @@ const MapButtons = ({ scrollEnabled, map, usZips }) => {
         Hide Map Options 🔼
       </Button>
 
-      <div id="disappear">
+      {/* <div id="disappear">
         <Result
           status="warning"
           icon={<WarningFilled style={{ color: 'red', fontSize: '6rem' }} />}
@@ -195,7 +195,7 @@ const MapButtons = ({ scrollEnabled, map, usZips }) => {
             </Button>
           }
         />
-      </div>
+      </div> */}
     </div>
   );
 };
