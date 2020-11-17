@@ -2,7 +2,6 @@
 // This allows for the simplification of flow when importing actions into your components throughout your app.
 // Actions should be focused to a single purpose.
 // You can have multiple action creators per file if it makes sense to the purpose those action creators are serving.
-
 // Declare action TYPES at the top of the file
 import axios from 'axios';
 export const UPDATE_FILTERS = 'UPDATE_FILTERS';
@@ -13,14 +12,14 @@ export const updateFilters = filters => {
 };
 
 export const fetchIncidents = () => dispatch => {
-  return;
-  // axios
-  //   .get(`https://labs27-d-hrf-api.herokuapp.com/incidents/dummy`)
-  //   .then(res => {
-  //     return { type: FETCH_INCIDENTS, payload: res.data };
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
+  axios
+    .get(`https://b-ds.humanrightsfirst.dev/full-report`)
+    .then(res => {
+      console.log(res);
+      dispatch({ type: FETCH_INCIDENTS, payload: res.data });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 // ^^ This is doing NOTHING

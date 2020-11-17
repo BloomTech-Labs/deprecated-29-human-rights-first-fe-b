@@ -14,8 +14,7 @@ import { updateFilters } from '../../../state/actions';
 import 'antd/dist/antd.css';
 import './FilterForm.css';
 import statesDB from '../../../database/states.json';
-import { initialIncidents } from '../../../state/reducers/filtersReducer';
-import { incidents, sources } from './assets';
+import { incidents, sources, initialTemporaryChanges } from './assets';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -24,12 +23,14 @@ const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
   const dispatch = useDispatch();
-  const [incidentsState, stateName, zipCode] = useSelector(store => [
-    store.filters.incidents,
-    store.filters.stateName,
-    store.filters.zipCode,
-  ]);
-  console.log(incidentsState);
+  // const [incidentsState, stateName, zipCode] = useSelector(store => [
+  //   store.filters.incidents,
+  //   store.filters.stateName,
+  //   store.filters.zipCode,
+  // ]);
+  const [temporaryChanges, setTemporaryChanges] = useState(
+    initialTemporaryChanges
+  );
   // filter out Alaska and Hawaii -- Maybe include them in a cutout?
   const filteredStates = statesDB.filter(state => {
     return state.state !== 'Alaska' && state.state !== 'Hawaii';
@@ -54,10 +55,10 @@ export default function FiltersForm() {
         <Select
           allowClear
           showSearch // useful to not have to scroll through 50+ items to find what you're looking for
-          onSelect={stateName => dispatch(updateFilters({ stateName }))}
+          // onSelect={stateName => dispatch(updateFilters({ stateName }))}
           placeholder="Select a State"
           style={{ width: 150 }}
-          value={stateName}
+          value={temporaryChanges.stateName}
         >
           {filteredStates.map(state => {
             return <Option value={state.state}>{state.state}</Option>;
@@ -66,16 +67,21 @@ export default function FiltersForm() {
         <Search
           placeholder="Zip Code"
           allowClear
-          // onSearch={(value, e) => dispatch(updateFilters({ zipCode: value }))}
+          onSearch={(value, e) => dispatch(updateFilters({ zipCode: value }))}
           style={{ width: 150 }}
-          // onChange={e => dispatch(updateFilters({ zipCode: e.target.value }))}
-          // value={zipCode}
+          onChange={e =>
+            setTemporaryChanges({
+              ...temporaryChanges,
+              zipCode: e.target.value,
+            })
+          }
+          value={temporaryChanges.zipCode}
         />
         <Button
           type="link"
           onClick={() => {
-            dispatch(updateFilters({ incidents: initialIncidents }));
-            dispatch(updateFilters({ stateName: null, zipCode: null }));
+            setTemporaryChanges(initialTemporaryChanges);
+            dispatch(updateFilters(initialTemporaryChanges));
           }}
         >
           Reset Filters
@@ -90,17 +96,26 @@ export default function FiltersForm() {
                 return (
                   <Col span={6}>
                     <Checkbox
-                      checked={incidentsState[getKeyFromName(incident)]} // Control the "checked" attribute with the boolean value of the state.
-                      onChange={e => {
+                      checked={
+                        temporaryChanges.incidents[getKeyFromName(incident)]
+                      } // Control the "checked" attribute with the boolean value of the state.
+                      onClick={e => {
                         let incidentKey = getKeyFromName(incident);
-                        dispatch(
-                          updateFilters({
-                            incidents: {
-                              ...incidentsState,
-                              [incidentKey]: e.target.checked,
-                            },
-                          })
-                        );
+                        setTemporaryChanges({
+                          ...temporaryChanges,
+                          incidents: {
+                            ...temporaryChanges.incidents,
+                            [incidentKey]: e.target.checked,
+                          },
+                        });
+                        // dispatch(
+                        //   updateFilters({
+                        //     incidents: {
+                        //       ...temporaryChanges,
+                        //       [incidentKey]: e.target.checked,
+                        //     },
+                        //   })
+                        // );
                       }}
                     >
                       {incident}
@@ -108,6 +123,12 @@ export default function FiltersForm() {
                   </Col>
                 );
               })}
+              <Button
+                type="link"
+                onClick={() => dispatch(updateFilters(temporaryChanges))}
+              >
+                Apply Filters
+              </Button>
             </Row>
           </div>
         </div>

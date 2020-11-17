@@ -26,16 +26,19 @@ export const App = () => {
   return (
     <div>
       <NavBar />
-      <main>
+      <div className="tabs-container">
         <Tabs
           defaultActiveKey="1"
           type="card"
           size="large"
           tabBarExtraContent={openFilters}
+          // tabBarStyle={{ backgroundColor: '#003767' }}
         >
           <TabPane tab="Map" key="1">
-            <div id="map" style={{ display: 'block' }}>
-              {<Map />}
+            <div className="map-container">
+              <div id="map" style={{ display: 'block' }}>
+                {<Map className="mapComponent" />}
+              </div>
             </div>
           </TabPane>
           <TabPane tab="Graph" key="2" style={{ backgroundColor: '#191a1a' }}>
@@ -45,7 +48,7 @@ export const App = () => {
             <div id="about">{<About />}</div>
           </TabPane>
         </Tabs>
-      </main>
+      </div>
       <footer className="page-footer">
         <small>© Copyright 2020. All rights reserved.</small>
         <ul></ul>

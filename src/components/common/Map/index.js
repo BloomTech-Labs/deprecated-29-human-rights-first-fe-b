@@ -13,6 +13,16 @@ import { policeBadge, policeHelmet } from '../../../assets/';
 
 import { fetchIncidents } from '../../../state/actions';
 
+// export default class index extends Component {
+//   constructor() {
+//     super();
+//     this.state = {};
+//   }
+//   render() {
+//     return <div></div>;
+//   }
+// }
+
 const Map = () => {
   // using a NYC API to get dummy data for display on the map
   // this will be replaced with our project's backend once it's ready
@@ -22,23 +32,35 @@ const Map = () => {
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
-  console.log(incidentType, events);
-  // console.log(incidentType, events);
+  console.log('Log from Map component', incidentType, events);
+
+  let dict = {};
+  events.forEach(element => {
+    element.tags.forEach(tag => {
+      if (tag in dict) {
+        dict[tag] += 1;
+      } else {
+        dict[tag] = 1;
+      }
+    });
+  });
+  console.log('Dictionary', dict);
+
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   // -> showcase our data instantly from the api call
-  //   dispatch(fetchIncidents());
-  // }, [dispatch]);
+  useEffect(() => {
+    // -> showcase our data instantly from the api call
+    dispatch(fetchIncidents());
+  }, [dispatch]);
 
   // ^^ This is doing NOTHING
 
   // ----------- map
 
   const bounds = [
-    [-127.265625, 25.244696],
-    [-64.6875, 50.064192],
+    [-127.265625, 23.244696],
+    [-64.6875, 52.064192],
   ];
 
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -48,7 +70,7 @@ const Map = () => {
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
     center: [-95.712891, 37.09024], // starting position [lng, lat]
-    zoom: 0, // starting zoom
+    zoom: 1, // starting zoom
     maxBounds: bounds, // Sets bounds as max
   });
 
@@ -70,24 +92,26 @@ const Map = () => {
 
   // --------- converting json to geojson
 
-  const geojson = events.map(incident => ({
-    geometry: {
-      type: 'Point',
-      coordinates: [
-        parseFloat(incident.LONGITUDE),
-        parseFloat(incident.LATITUDE),
-      ],
-    },
-    type: 'Feature',
-    properties: {
-      id: incident.id,
-      date_text: incident['date_text'],
-      title: incident.text,
-      type: incident['tags_str'],
-      link1: incident.Link1,
-      link2: incident.Link2,
-    },
-  }));
+  const geojson = events.map(incident => {
+    let currentIncident = {
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          parseFloat(incident.geolocation.long),
+          parseFloat(incident.geolocation.lat),
+        ],
+      },
+      type: 'Feature',
+      properties: {
+        id: incident.incident_id,
+        date_text: incident['date'],
+        title: incident.title,
+        type: incident['tags_str'],
+
+        link1: incident.src.length ? incident.src[0] : '',
+      },
+    };
+  });
 
   const geojson2 = incidentsDB.data.map(incident => ({
     geometry: {
@@ -107,6 +131,7 @@ const Map = () => {
       link2: incident.Link2,
     },
   }));
+  console.log('JSON DATA', events[0], incidentsDB.data[0]);
 
   //  --- filtering data based off of brutality type
   function containsAny(source, target) {
@@ -127,7 +152,6 @@ const Map = () => {
 
     setUpdatedIncidents(filteredIncidents);
   }, [incidentType]);
-  console.log(updatedIncidents);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;
@@ -433,5 +457,4 @@ const Map = () => {
     </div>
   );
 };
-
 export default Map;
