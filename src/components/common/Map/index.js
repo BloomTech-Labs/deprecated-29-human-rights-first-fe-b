@@ -10,49 +10,22 @@ import TwitterPopup from '../TwitterPopup';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { policeBadge, policeHelmet } from '../../../assets/';
+import { rankingChart, parsedEvent } from './assets';
 
 import { fetchIncidents } from '../../../state/actions';
-
-// export default class index extends Component {
-//   constructor() {
-//     super();
-//     this.state = {};
-//   }
-//   render() {
-//     return <div></div>;
-//   }
-// }
 
 const Map = () => {
   // using a NYC API to get dummy data for display on the map
   // this will be replaced with our project's backend once it's ready
   let scrollEnabled = false; // toggles scroll zoom -- can't use useState because it rerenders the map
   let stateJump = false;
-  const [incidentType, events] = useSelector(state => [
+  const [incidentRank, events] = useSelector(state => [
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
-  console.log('Log from Map component', incidentType, events);
-
-  let dict = {};
-  events.forEach(element => {
-    element.tags.forEach(tag => {
-      if (tag in dict) {
-        dict[tag] += 1;
-      } else {
-        dict[tag] = 1;
-      }
-    });
-  });
-  console.log('Dictionary', dict);
 
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    // -> showcase our data instantly from the api call
-    dispatch(fetchIncidents());
-  }, [dispatch]);
 
   // ^^ This is doing NOTHING
 
@@ -91,27 +64,42 @@ const Map = () => {
   map.scrollZoom.disable();
 
   // --------- converting json to geojson
+  const [geojson, setGeoJson] = useState([]);
+  useEffect(() => {
+    const parsedIncidents = events.map(incident => parsedEvent(incident));
+    if (!updatedIncidents.length) {
+      setUpdatedIncidents(parsedIncidents);
+    } else {
+      setUpdatedIncidents(
+        parsedIncidents.filter(incident => {
+          const curTags = incident.properties.type;
 
-  const geojson = events.map(incident => {
-    let currentIncident = {
-      geometry: {
-        type: 'Point',
-        coordinates: [
-          parseFloat(incident.geolocation.long),
-          parseFloat(incident.geolocation.lat),
-        ],
-      },
-      type: 'Feature',
-      properties: {
-        id: incident.incident_id,
-        date_text: incident['date'],
-        title: incident.title,
-        type: incident['tags_str'],
-
-        link1: incident.src.length ? incident.src[0] : '',
-      },
-    };
-  });
+          const selectedTags = [];
+          for (let [key, value] of Object.entries(rankingChart)) {
+            if (incidentRank[key]) {
+              value.forEach(tag => {
+                selectedTags.push(tag);
+              });
+            }
+          }
+          let include = false;
+          curTags.forEach(tag => {
+            if (selectedTags.indexOf(tag) > -1) {
+              include = true;
+            }
+            // if (tag in selectedTags) {
+            //   console.log('Match', tag, selectedTags);
+            //   return true;
+            // } else {
+            //   console.log('No match', tag);
+            //   return false;
+            // }
+          });
+          return include;
+        })
+      );
+    }
+  }, [events, incidentRank]);
 
   const geojson2 = incidentsDB.data.map(incident => ({
     geometry: {
@@ -131,27 +119,29 @@ const Map = () => {
       link2: incident.Link2,
     },
   }));
-  console.log('JSON DATA', events[0], incidentsDB.data[0]);
 
   //  --- filtering data based off of brutality type
-  function containsAny(source, target) {
-    let result = source.filter(function(item) {
-      return target.indexOf(item) > -1;
-    });
-    return result.length > 0;
-  }
+  // function containsAny(source, ranks) {
+  //   console.log('source', source, 'ranks', ranks);
+  //   let result = source.filter(function(rank) {
+  //     ranks.some(tag => {});
+  //     return ranks.indexOf(rank) > -1;
+  //   });
+  //   return result.length > 0;
+  // }
 
-  let filteredTypes = Object.keys(incidentType).filter(type => {
-    return incidentType[type] === true;
-  });
-  useEffect(() => {
-    const filteredIncidents = geojson2.filter(incident => {
-      let incidents = incident.properties.type.toLowerCase().split(', ');
-      return containsAny(incidents, filteredTypes);
-    });
+  // useEffect(() => {
+  //   let filteredRanks = Object.keys(incidentRank).filter(rank => {
+  //     return incidentRank[rank] === true;
+  //   });
+  //   const filteredIncidents = geojson.filter(incident => {
+  //     let tags = incident.properties.type.toLowerCase().split(', ');
 
-    setUpdatedIncidents(filteredIncidents);
-  }, [incidentType]);
+  //     return containsAny(tags, filteredRanks);
+  //   });
+
+  //   setUpdatedIncidents(filteredIncidents);
+  // }, [incidentRank]);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;
@@ -258,6 +248,7 @@ const Map = () => {
     });
 
     // source in geojson format: list of all locations
+    console.log('Line 256 Mapjs', updatedIncidents);
     map.addSource('incidents', {
       type: 'geojson',
       data: { features: updatedIncidents },
@@ -340,7 +331,7 @@ const Map = () => {
       filter: ['!', ['has', 'point_count']],
       layout: {
         visibility: 'visible',
-        'icon-image': 'cat', // THIS SHOULD BE A MARKER
+        'icon-image': 'badge', // THIS SHOULD BE A MARKER
         'icon-size': 0.06, // ZOOMED FOR DEMO
         'icon-allow-overlap': true,
       },
@@ -357,6 +348,7 @@ const Map = () => {
         layers: ['clusters'],
       });
       const clusterId = features[0].properties.cluster_id;
+      console.log('LOC 356', features, clusterId);
       map
         .getSource('incidents')
         .getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -379,6 +371,7 @@ const Map = () => {
       const title = incident.title;
       const type = incident.type;
       const link = incident.link1;
+      console.log('LOC 378', incident, date, title, type, link);
 
       // if map zoomed out such that multiple copies of the feature are visible, popup appears over the copy being pointed to.
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {

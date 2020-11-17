@@ -5,7 +5,6 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  console.log('From incidents reducer', action.payload);
   switch (action.type) {
     case FETCH_INCIDENTS:
       return {

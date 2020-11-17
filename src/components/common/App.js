@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import OldMap from './OldMap';
+import { useDispatch } from 'react-redux';
 import Map from './Map';
 import Graph from './Graph';
 import About from './About';
@@ -8,9 +9,11 @@ import 'antd/dist/antd.css';
 import '../../styles/index.css';
 import { Tabs, Button, Popover } from 'antd';
 import NavBar from './NavBar';
+import { fetchIncidents } from '../../state/actions';
 
 export const App = () => {
   const { TabPane } = Tabs;
+  const dispatch = useDispatch();
 
   const openFilters = (
     <Popover
@@ -22,6 +25,10 @@ export const App = () => {
       <Button type="link">Open Filters</Button>
     </Popover>
   );
+  useEffect(() => {
+    // -> showcase our data instantly from the api call
+    dispatch(fetchIncidents());
+  }, []);
 
   return (
     <div>
