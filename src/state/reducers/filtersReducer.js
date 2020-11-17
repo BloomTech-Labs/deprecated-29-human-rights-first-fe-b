@@ -1,13 +1,11 @@
 import { UPDATE_FILTERS } from '../actions/';
 
-export const initialIncidents = {
-  energyDevices: true,
-  soft: true,
-  hard: true,
-  projectiles: true,
-  chemical: true,
-  presence: true,
-  other: true,
+const initialIncidents = {
+  rank1: true,
+  rank2: true,
+  rank3: true,
+  rank4: true,
+  rank5: true,
 };
 
 const initialState = {

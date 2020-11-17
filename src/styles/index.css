@@ -3,10 +3,22 @@
   display: flex;
   flex-direction: row;
   padding: 1% 0;
-  width: 50%;
+  width: 20%;
   margin-left: 5%;
   overflow: hidden;
 }
+
+.map-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#map {
+  width: 80%;
+}
+/* .tabs-container {
+  background-color: #003767;
+} */
 
 .map_box {
   height: 80vh;
@@ -296,8 +308,8 @@ a {
 }
 
 .company-info img {
-  width: 60px;
-  padding: 6px;
+  width: 40%;
+  padding: 1rem;
 }
 
 .user-nav {

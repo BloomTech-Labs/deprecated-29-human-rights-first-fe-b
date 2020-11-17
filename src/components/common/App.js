@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import OldMap from './OldMap';
+import { useDispatch } from 'react-redux';
 import Map from './Map';
 import Graph from './Graph';
 import About from './About';
@@ -8,9 +9,11 @@ import 'antd/dist/antd.css';
 import '../../styles/index.css';
 import { Tabs, Button, Popover } from 'antd';
 import NavBar from './NavBar';
+import { fetchIncidents } from '../../state/actions';
 
 export const App = () => {
   const { TabPane } = Tabs;
+  const dispatch = useDispatch();
 
   const openFilters = (
     <Popover
@@ -22,20 +25,27 @@ export const App = () => {
       <Button type="link">Open Filters</Button>
     </Popover>
   );
+  useEffect(() => {
+    // -> showcase our data instantly from the api call
+    dispatch(fetchIncidents());
+  }, []);
 
   return (
     <div>
       <NavBar />
-      <main>
+      <div className="tabs-container">
         <Tabs
           defaultActiveKey="1"
           type="card"
           size="large"
           tabBarExtraContent={openFilters}
+          // tabBarStyle={{ backgroundColor: '#003767' }}
         >
           <TabPane tab="Map" key="1">
-            <div id="map" style={{ display: 'block' }}>
-              {<Map />}
+            <div className="map-container">
+              <div id="map" style={{ display: 'block' }}>
+                {<Map className="mapComponent" />}
+              </div>
             </div>
           </TabPane>
           <TabPane tab="Graph" key="2" style={{ backgroundColor: '#191a1a' }}>
@@ -45,7 +55,7 @@ export const App = () => {
             <div id="about">{<About />}</div>
           </TabPane>
         </Tabs>
-      </main>
+      </div>
       <footer className="page-footer">
         <small>© Copyright 2020. All rights reserved.</small>
         <ul></ul>
