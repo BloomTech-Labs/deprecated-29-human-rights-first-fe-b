@@ -65,39 +65,45 @@ const Map = () => {
 
   // --------- converting json to geojson
   const [geojson, setGeoJson] = useState([]);
+
+  // Controls the parsing for the events that should be rendered
   useEffect(() => {
     const parsedIncidents = events.map(incident => parsedEvent(incident));
-    if (!updatedIncidents.length) {
+    if (
+      // Doesn't filter when every checkbox is true, just puts all incidents on the map
+      incidentRank['rank1'] &&
+      incidentRank['rank2'] &&
+      incidentRank['rank3'] &&
+      incidentRank['rank4'] &&
+      incidentRank['rank5']
+    ) {
       setUpdatedIncidents(parsedIncidents);
     } else {
-      setUpdatedIncidents(
-        parsedIncidents.filter(incident => {
-          const curTags = incident.properties.type;
-
-          const selectedTags = [];
-          for (let [key, value] of Object.entries(rankingChart)) {
-            if (incidentRank[key]) {
-              value.forEach(tag => {
-                selectedTags.push(tag);
-              });
-            }
+      // Runs whenever any checkbox is false // Filters out based on the filtered state in global
+      let filteredIncidents = parsedIncidents.filter(incident => {
+        //building tags to compare incoming data by from internal assets
+        const selectedTags = [];
+        //Ranks that are chosen have their tags pushed onto selectedTags to be used in determining whether current incident should be rendered.
+        for (let [key, value] of Object.entries(rankingChart)) {
+          if (incidentRank[key]) {
+            value.forEach(tag => {
+              selectedTags.push(tag);
+            });
           }
-          let include = false;
-          curTags.forEach(tag => {
-            if (selectedTags.indexOf(tag) > -1) {
-              include = true;
-            }
-            // if (tag in selectedTags) {
-            //   console.log('Match', tag, selectedTags);
-            //   return true;
-            // } else {
-            //   console.log('No match', tag);
-            //   return false;
-            // }
-          });
-          return include;
-        })
-      );
+        }
+
+        const curTags = incident.properties.type;
+        let include = false;
+        // Checks the tags of current incident to see if they are in the list of selectedTags
+        curTags.forEach(tag => {
+          if (selectedTags.indexOf(tag) > -1) {
+            include = true;
+          }
+        });
+        //Incident filtered in for rendering if tags match the ones the user is trying to filter in.
+        return include;
+      });
+      setUpdatedIncidents(filteredIncidents);
     }
   }, [events, incidentRank]);
 
