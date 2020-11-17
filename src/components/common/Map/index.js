@@ -19,9 +19,11 @@ const Map = () => {
   // this will be replaced with our project's backend once it's ready
   let scrollEnabled = false; // toggles scroll zoom -- can't use useState because it rerenders the map
   let stateJump = false;
-  const [incidentRank, events] = useSelector(state => [
+  const [incidentRank, events, fetchStat1, fetchStat2] = useSelector(state => [
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
+    state.fetchIncidentsReducer.isFetching,
+    state.fetchIncidentsReducer.fetched,
   ]);
 
   const [updatedIncidents, setUpdatedIncidents] = useState([]);

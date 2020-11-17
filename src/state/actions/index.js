@@ -5,7 +5,9 @@
 // Declare action TYPES at the top of the file
 import axios from 'axios';
 export const UPDATE_FILTERS = 'UPDATE_FILTERS';
-export const FETCH_INCIDENTS = 'FETCH_INCIDENTS';
+export const FETCHING_INCIDENTS_START = 'FETCH_INCIDENTS_START';
+export const FETCHING_INCIDENTS_DONE = 'FETCH_INCIDENTS_DONE';
+export const FETCHING_INCIDENTS_ERROR = 'FETCHING_INCIDENTS_ERROR';
 
 export const updateFilters = filters => {
   return { type: UPDATE_FILTERS, payload: filters };
@@ -15,10 +17,11 @@ export const fetchIncidents = () => dispatch => {
   axios
     .get(`https://b-ds.humanrightsfirst.dev/full-report`)
     .then(res => {
-      console.log(res);
-      dispatch({ type: FETCH_INCIDENTS, payload: res.data });
+      dispatch({ type: FETCHING_INCIDENTS_START, payload: res.data });
+      console.log(res.data, 'data from interacting with ds api');
     })
     .catch(err => {
+      dispatch({ type: FETCHING_INCIDENTS_ERROR, payload: err.message });
       console.log(err);
     });
 };

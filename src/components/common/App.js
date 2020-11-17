@@ -8,7 +8,7 @@ import FiltersForm from './FilterForm';
 import 'antd/dist/antd.css';
 import '../../styles/index.css';
 import { Tabs, Button, Popover } from 'antd';
-import NavBar from './NavBar';
+import NavBar from '../common/NavBar';
 import { fetchIncidents } from '../../state/actions';
 
 export const App = () => {
