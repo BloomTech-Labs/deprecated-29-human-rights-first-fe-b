@@ -13,7 +13,7 @@ export const updateFilters = filters => {
 
 export const fetchIncidents = () => dispatch => {
   axios
-    .get(`https://b-ds.humanrightsfirst.dev/full-report`)
+    .get(`http://b-ds.humanrightsfirst.dev/full-report`)
     .then(res => {
       console.log(res);
       dispatch({ type: FETCH_INCIDENTS, payload: res.data });
@@ -22,4 +22,3 @@ export const fetchIncidents = () => dispatch => {
       console.log(err);
     });
 };
-// ^^ This is doing NOTHING
