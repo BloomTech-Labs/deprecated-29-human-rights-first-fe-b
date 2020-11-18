@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../../styles/index.css';
+import './NavBar.css';
 
 const NavBar = () => {
   return (
@@ -9,7 +9,6 @@ const NavBar = () => {
           src="https://www.humanrightsfirst.org/sites/default/files/hrf-logo.png"
           alt="Human Rights First logo"
         />
-        {/* <h2 style={{ margin: 0 }}>Human Rights First</h2> */}
       </div>
       {/* <div className="user-nav">
         <button>Sign In</button>

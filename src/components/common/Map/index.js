@@ -26,9 +26,6 @@ const Map = () => {
 
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
   const dispatch = useDispatch();
-
-  // ^^ This is doing NOTHING
-
   // ----------- map
 
   const bounds = [
@@ -71,11 +68,11 @@ const Map = () => {
     const parsedIncidents = events.map(incident => parsedEvent(incident));
     if (
       // Doesn't filter when every checkbox is true, just puts all incidents on the map
-      incidentRank['rank1'] &&
-      incidentRank['rank2'] &&
-      incidentRank['rank3'] &&
-      incidentRank['rank4'] &&
-      incidentRank['rank5']
+      incidentRank['policePresence'] &&
+      incidentRank['emptyHandForce'] &&
+      incidentRank['bluntForceWeapons'] &&
+      incidentRank['chemicalAndElectricalWeapons'] &&
+      incidentRank['lethalForce']
     ) {
       setUpdatedIncidents(parsedIncidents);
     } else {
@@ -125,29 +122,6 @@ const Map = () => {
       link2: incident.Link2,
     },
   }));
-
-  //  --- filtering data based off of brutality type
-  // function containsAny(source, ranks) {
-  //   console.log('source', source, 'ranks', ranks);
-  //   let result = source.filter(function(rank) {
-  //     ranks.some(tag => {});
-  //     return ranks.indexOf(rank) > -1;
-  //   });
-  //   return result.length > 0;
-  // }
-
-  // useEffect(() => {
-  //   let filteredRanks = Object.keys(incidentRank).filter(rank => {
-  //     return incidentRank[rank] === true;
-  //   });
-  //   const filteredIncidents = geojson.filter(incident => {
-  //     let tags = incident.properties.type.toLowerCase().split(', ');
-
-  //     return containsAny(tags, filteredRanks);
-  //   });
-
-  //   setUpdatedIncidents(filteredIncidents);
-  // }, [incidentRank]);
 
   // --- initiating set up for when map loads
   let hoveredStateId = null;
@@ -254,7 +228,7 @@ const Map = () => {
     });
 
     // source in geojson format: list of all locations
-    console.log('Line 256 Mapjs', updatedIncidents);
+
     map.addSource('incidents', {
       type: 'geojson',
       data: { features: updatedIncidents },
@@ -428,32 +402,34 @@ const Map = () => {
   }); // end of main map.on()
 
   return (
-    <div className="buttons">
-      {/* this one button refuses to work when put into a different component */}
-      <Button
-        type="primary"
-        className="appear"
-        style={{
-          zIndex: 10,
-          position: 'absolute',
-          width: '200px',
-          marginTop: '34px',
-          display: 'none',
-          opacity: 0,
-        }}
-        onClick={() => {
-          if (stateJump) {
-            stateJump = false;
-          } else {
-            stateJump = true;
-          }
-        }}
-      >
-        Fast Travel States
-      </Button>
+    <>
+      <div className="buttons">
+        {/* this one button refuses to work when put into a different component */}
+        <Button
+          type="primary"
+          className="appear"
+          style={{
+            zIndex: 10,
+            position: 'absolute',
+            width: '200px',
+            marginTop: '34px',
+            display: 'none',
+            opacity: 0,
+          }}
+          onClick={() => {
+            if (stateJump) {
+              stateJump = false;
+            } else {
+              stateJump = true;
+            }
+          }}
+        >
+          Fast Travel States
+        </Button>
 
-      <MapButtons scrollEnabled={scrollEnabled} map={map} usZips={usZips} />
-    </div>
+        <MapButtons scrollEnabled={scrollEnabled} map={map} usZips={usZips} />
+      </div>
+    </>
   );
 };
 export default Map;

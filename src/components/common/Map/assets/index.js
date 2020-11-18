@@ -1,5 +1,6 @@
+//Rough categorization for tags of incidents. DS will need to associate a single rank with each incident in the future.
 const rankingChart = {
-  rank1: [
+  policePresence: [
     'bike',
     'body-cam',
     'bystander',
@@ -27,8 +28,8 @@ const rankingChart = {
     'racial-profiling',
     'abuse-of-power',
   ],
-  rank2: ['threaten'],
-  rank3: [
+  emptyHandForce: ['threaten'],
+  bluntForceWeapons: [
     'kick',
     'knee',
     'knee-on-neck',
@@ -39,7 +40,7 @@ const rankingChart = {
     'push',
     'tackle',
   ],
-  rank4: [
+  chemicalAndElectricalWeapons: [
     'tear-gas',
     'less-lethal',
     'tear-gas-canister',
@@ -74,7 +75,7 @@ const rankingChart = {
     'shield',
     'sexual-assault',
   ],
-  rank5: ['choke', 'death'],
+  lethalForce: ['choke', 'death'],
 };
 function parsedEvent(incident) {
   return {
