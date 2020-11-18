@@ -3,6 +3,7 @@ import { Button, Result } from 'antd';
 import statesDB from '../../../database/states.json';
 import { useSelector } from 'react-redux';
 import { WarningFilled } from '@ant-design/icons';
+import './MapButtons.css';
 
 const MapButtons = ({ scrollEnabled, map, usZips }) => {
   const [stateName, zipCode] = useSelector(state => [
@@ -89,6 +90,7 @@ const MapButtons = ({ scrollEnabled, map, usZips }) => {
         }}
         onClick={() => {
           const hiddenButtons = document.getElementsByClassName('appear');
+          console.log(hiddenButtons);
           for (let i = 0; i < hiddenButtons.length; i++) {
             hiddenButtons[i].style.display = 'block';
           }
@@ -194,8 +196,8 @@ const MapButtons = ({ scrollEnabled, map, usZips }) => {
               Proceed
             </Button>
           }
-        />
-      </div> */}
+        /> */}
+      {/* </div> */}
     </div>
   );
 };

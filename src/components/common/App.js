@@ -69,6 +69,9 @@ export const App = () => {
                   </p>
                 </div>
               </div>
+              <footer className="page-footer">
+                <small>© Copyright 2020. All rights reserved.</small>
+              </footer>
             </div>
           </TabPane>
           <TabPane tab="Graph" key="2" style={{ backgroundColor: '#191a1a' }}>
@@ -79,11 +82,6 @@ export const App = () => {
           </TabPane>
         </Tabs>
       </div>
-
-      <footer className="page-footer">
-        <small>© Copyright 2020. All rights reserved.</small>
-        <ul></ul>
-      </footer>
     </div>
   );
 };

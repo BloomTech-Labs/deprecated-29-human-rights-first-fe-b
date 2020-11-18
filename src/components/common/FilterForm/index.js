@@ -23,11 +23,7 @@ const { RangePicker } = DatePicker;
 
 export default function FiltersForm() {
   const dispatch = useDispatch();
-  // const [incidentsState, stateName, zipCode] = useSelector(store => [
-  //   store.filters.incidents,
-  //   store.filters.stateName,
-  //   store.filters.zipCode,
-  // ]);
+
   const [temporaryChanges, setTemporaryChanges] = useState(
     initialTemporaryChanges
   );
@@ -47,7 +43,7 @@ export default function FiltersForm() {
   return (
     <div className="filter-box">
       <div className="search-bars">
-        {/* Waiting on data from backend to implement rangePicker
+        {/* RangePicker not yet implemented
         onChange needs to filter incidents where date >= selectedDate1 and date <= selectedDate2 
         */}
         <RangePicker allowClear />
@@ -55,7 +51,10 @@ export default function FiltersForm() {
         <Select
           allowClear
           showSearch // useful to not have to scroll through 50+ items to find what you're looking for
-          // onSelect={stateName => dispatch(updateFilters({ stateName }))}
+          onSelect={stateName => {
+            setTemporaryChanges({ ...temporaryChanges, stateName });
+            dispatch(updateFilters({ stateName }));
+          }}
           placeholder="Select a State"
           style={{ width: 150 }}
           value={temporaryChanges.stateName}
@@ -94,8 +93,9 @@ export default function FiltersForm() {
             <Row>
               {incidents.map((incident, id) => {
                 return (
-                  <Col span={6}>
+                  <Col span={12}>
                     <Checkbox
+                      key={id}
                       checked={
                         temporaryChanges.incidents[getKeyFromName(incident)]
                       } // Control the "checked" attribute with the boolean value of the state.
@@ -108,14 +108,6 @@ export default function FiltersForm() {
                             [incidentKey]: e.target.checked,
                           },
                         });
-                        // dispatch(
-                        //   updateFilters({
-                        //     incidents: {
-                        //       ...temporaryChanges,
-                        //       [incidentKey]: e.target.checked,
-                        //     },
-                        //   })
-                        // );
                       }}
                     >
                       {incident}
@@ -133,27 +125,25 @@ export default function FiltersForm() {
           </div>
         </div>
 
-        {/* Sources are not yet implemented */}
+        {/* Sources are not yet implemented, use same structure as Filters above */}
 
         <div className="source-filters">
           <Title level={5}>Source Type</Title>
           <div className="checkboxes">
-            <Checkbox.Group style={{ width: '100%' }} defaultValue={sources}>
-              <Row>
-                {sources.map((source, id) => {
-                  return (
-                    <Col span={12}>
-                      <Checkbox
-                        value={source}
-                        onChange={() => console.log({ source })}
-                      >
-                        {source}
-                      </Checkbox>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Checkbox.Group>
+            <Row>
+              {sources.map((source, id) => {
+                return (
+                  <Col span={12}>
+                    <Checkbox
+                      value={source}
+                      onChange={() => console.log({ source })}
+                    >
+                      {source}
+                    </Checkbox>
+                  </Col>
+                );
+              })}
+            </Row>
           </div>
         </div>
       </div>

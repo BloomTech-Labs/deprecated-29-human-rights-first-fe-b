@@ -26,6 +26,7 @@
   background-color: #003767;
   color: #fff8fb;
   font-family: 'Playfair Display', serif;
+  margin-bottom: 0.5%;
 }
 
 .map-tab-text div {
@@ -36,6 +37,8 @@ h3 {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
   color: #fff8fb;
+  font-weight: bold;
+  padding: 1% 0;
 }
 
 .mapboxgl-map {

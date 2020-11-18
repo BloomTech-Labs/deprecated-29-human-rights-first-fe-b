@@ -328,7 +328,6 @@ const Map = () => {
         layers: ['clusters'],
       });
       const clusterId = features[0].properties.cluster_id;
-      console.log('LOC 356', features, clusterId);
       map
         .getSource('incidents')
         .getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -351,7 +350,6 @@ const Map = () => {
       const title = incident.title;
       const type = incident.type;
       const link = incident.link1;
-      console.log('LOC 378', incident, date, title, type, link);
 
       // if map zoomed out such that multiple copies of the feature are visible, popup appears over the copy being pointed to.
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
