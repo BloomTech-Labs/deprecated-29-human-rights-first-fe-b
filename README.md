@@ -2,7 +2,7 @@
 
 ## Description 👇
 
-> **Disclaimer:** This application is currently in Alpha (as of Oct 20, 2020) and is not ready for production. Please use at your own risk as things will change almost daily.
+> **Disclaimer:** This application is currently in Alpha (as of Nov 20, 2020) and is not ready for production. Please use at your own risk as things will change almost daily.
 
 - Our team is developing an interactive map that identifies potential instances of police use of force across the United States of America for [Human Rights First](https://www.humanrightsfirst.org/), an independent advocacy and action organization. We are also developing additional graphics to track and display police brutality trends.
 - An application that takes information from data provided by the data science team collecting relevant incidents and data from Twitter, Reddit, and police agencies to display it on the map.
