@@ -10,8 +10,10 @@
 
 ## Deployed App
 
-- https://d.humanrightsfirst.dev/
-  <img src='./src/assets/hrf.jpg'>
+- https://www.b.humanrightsfirst.dev/\
+- Deployed site is currently pulling directly from DS API (Will need to be switched to backend API before production)
+  - Will need to configure browser as follows:
+    <img src='./src/assets/deployConfig.png'>
 
 ## Features
 
@@ -57,6 +59,22 @@
 - Map
 - Graph
 - About
+
+## Component Structure
+
+- App
+
+  - NavBar
+
+  - FilterForm (This controls map filtering, and should actually be moved to Map component.)
+  - Map (Mapbox is used in this component)
+
+    - TwitterPopup (Incident Views)
+    - MapButtons (Controls map functionality)
+
+  - Graph
+
+  - About
 
 ## Styling Our App
 

@@ -10,6 +10,7 @@ import '../../styles/index.css';
 import { Tabs, Button, Popover } from 'antd';
 import NavBar from './NavBar';
 import { fetchIncidents } from '../../state/actions';
+import calendar from '../../assets/calendar.jpg';
 
 export const App = () => {
   const { TabPane } = Tabs;
@@ -52,7 +53,7 @@ export const App = () => {
               </div>
               {/* Future contribution: Make the calendar into a working component instead of just having a picture. Could possibly be used instead of graph. */}
               <img
-                src="https://images.squarespace-cdn.com/content/v1/54ecf211e4b0ed744420c5b6/1602132420033-8PNPJPPPP270J5RF7OCA/ke17ZwdGBToddI8pDm48kB7j6pPDBrAq7KPGVajBvol7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UVpovQ6fx6i_w_vNol2126FL10KsLeiIYVVgnyhlrVCVy-bVSSRJZztkCOpAxPA4NA/calendar.jpg?format=1500w"
+                src={calendar}
                 alt="Calendar showing amount of days how many people die to police each day."
               ></img>
 
