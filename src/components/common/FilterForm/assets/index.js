@@ -1,11 +1,11 @@
 // Make a separate Temporary Changes state to act as a staging ground for the changes, so that global state is only changed once.
 
 const initialIncidents = {
-  rank1: true,
-  rank2: true,
-  rank3: true,
-  rank4: true,
-  rank5: true,
+  policePresence: true,
+  emptyHandForce: true,
+  bluntForceWeapons: true,
+  chemicalAndElectricalWeapons: true,
+  lethalForce: true,
 };
 
 const initialTemporaryChanges = {
@@ -16,7 +16,13 @@ const initialTemporaryChanges = {
   incidents: initialIncidents,
 };
 
-const incidents = ['Rank 1', 'Rank 2', 'Rank 3', 'Rank 4', 'Rank 5'];
+const incidents = [
+  'Police Presence',
+  'Empty Hand Force',
+  'Blunt Force Weapons',
+  'Chemical And Electrical Weapons',
+  'Lethal Force',
+];
 
 const sources = ['One', 'Two', 'Three', 'Four'];
 

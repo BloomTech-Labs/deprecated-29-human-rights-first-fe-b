@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import * as mapboxgl from 'mapbox-gl';
 import statesDB from '../../../database/states.json';
@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import usZips from 'us-zips';
 import MapButtons from './MapButtons';
 import incidentsDB from '../../../database/data2.json';
-import TwitterPopup from '../TwitterPopup';
+import TwitterPopup from './TwitterPopup';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { policeBadge, policeHelmet } from '../../../assets/';
@@ -18,17 +18,17 @@ const Map = () => {
   // using a NYC API to get dummy data for display on the map
   // this will be replaced with our project's backend once it's ready
   let scrollEnabled = false; // toggles scroll zoom -- can't use useState because it rerenders the map
-  let stateJump = false;
   const [incidentRank, events] = useSelector(state => [
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
-
+  const stateJump = useRef(false);
+  const switchStateJump = () => {
+    stateJump.current = !stateJump.current;
+  };
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
+
   const dispatch = useDispatch();
-
-  // ^^ This is doing NOTHING
-
   // ----------- map
 
   const bounds = [
@@ -63,19 +63,16 @@ const Map = () => {
   // disable initial scrolling -- toggle it on and off with a button
   map.scrollZoom.disable();
 
-  // --------- converting json to geojson
-  const [geojson, setGeoJson] = useState([]);
-
   // Controls the parsing for the events that should be rendered
   useEffect(() => {
     const parsedIncidents = events.map(incident => parsedEvent(incident));
     if (
       // Doesn't filter when every checkbox is true, just puts all incidents on the map
-      incidentRank['rank1'] &&
-      incidentRank['rank2'] &&
-      incidentRank['rank3'] &&
-      incidentRank['rank4'] &&
-      incidentRank['rank5']
+      incidentRank['policePresence'] &&
+      incidentRank['emptyHandForce'] &&
+      incidentRank['bluntForceWeapons'] &&
+      incidentRank['chemicalAndElectricalWeapons'] &&
+      incidentRank['lethalForce']
     ) {
       setUpdatedIncidents(parsedIncidents);
     } else {
@@ -126,29 +123,6 @@ const Map = () => {
     },
   }));
 
-  //  --- filtering data based off of brutality type
-  // function containsAny(source, ranks) {
-  //   console.log('source', source, 'ranks', ranks);
-  //   let result = source.filter(function(rank) {
-  //     ranks.some(tag => {});
-  //     return ranks.indexOf(rank) > -1;
-  //   });
-  //   return result.length > 0;
-  // }
-
-  // useEffect(() => {
-  //   let filteredRanks = Object.keys(incidentRank).filter(rank => {
-  //     return incidentRank[rank] === true;
-  //   });
-  //   const filteredIncidents = geojson.filter(incident => {
-  //     let tags = incident.properties.type.toLowerCase().split(', ');
-
-  //     return containsAny(tags, filteredRanks);
-  //   });
-
-  //   setUpdatedIncidents(filteredIncidents);
-  // }, [incidentRank]);
-
   // --- initiating set up for when map loads
   let hoveredStateId = null;
 
@@ -195,7 +169,7 @@ const Map = () => {
 
     // When the user moves over the states, we will update them -- using state's id
     map.on('mousemove', 'state-fills', function(e) {
-      if (stateJump) {
+      if (stateJump.current) {
         if (e.features.length > 0) {
           if (hoveredStateId) {
             map.setFeatureState(
@@ -227,7 +201,7 @@ const Map = () => {
       let currentState = statesDB.filter(state => {
         return state.state === e.features[0].properties.STATE_NAME;
       });
-      if (hoveredStateId && stateJump) {
+      if (hoveredStateId && stateJump.current) {
         map.flyTo({
           center: [currentState[0].longitude, currentState[0].latitude],
           zoom: 7,
@@ -254,7 +228,7 @@ const Map = () => {
     });
 
     // source in geojson format: list of all locations
-    console.log('Line 256 Mapjs', updatedIncidents);
+
     map.addSource('incidents', {
       type: 'geojson',
       data: { features: updatedIncidents },
@@ -354,7 +328,6 @@ const Map = () => {
         layers: ['clusters'],
       });
       const clusterId = features[0].properties.cluster_id;
-      console.log('LOC 356', features, clusterId);
       map
         .getSource('incidents')
         .getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -377,7 +350,6 @@ const Map = () => {
       const title = incident.title;
       const type = incident.type;
       const link = incident.link1;
-      console.log('LOC 378', incident, date, title, type, link);
 
       // if map zoomed out such that multiple copies of the feature are visible, popup appears over the copy being pointed to.
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
@@ -428,32 +400,18 @@ const Map = () => {
   }); // end of main map.on()
 
   return (
-    <div className="buttons">
-      {/* this one button refuses to work when put into a different component */}
-      <Button
-        type="primary"
-        className="appear"
-        style={{
-          zIndex: 10,
-          position: 'absolute',
-          width: '200px',
-          marginTop: '34px',
-          display: 'none',
-          opacity: 0,
-        }}
-        onClick={() => {
-          if (stateJump) {
-            stateJump = false;
-          } else {
-            stateJump = true;
-          }
-        }}
-      >
-        Fast Travel States
-      </Button>
+    <>
+      <div className="buttons">
+        {/* this one button refuses to work when put into a different component */}
 
-      <MapButtons scrollEnabled={scrollEnabled} map={map} usZips={usZips} />
-    </div>
+        <MapButtons
+          scrollEnabled={scrollEnabled}
+          map={map}
+          usZips={usZips}
+          switchStateJump={switchStateJump}
+        />
+      </div>
+    </>
   );
 };
 export default Map;

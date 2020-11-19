@@ -1,11 +1,11 @@
 import { UPDATE_FILTERS } from '../actions/';
 
 const initialIncidents = {
-  rank1: true,
-  rank2: true,
-  rank3: true,
-  rank4: true,
-  rank5: true,
+  policePresence: true,
+  emptyHandForce: true,
+  bluntForceWeapons: true,
+  chemicalAndElectricalWeapons: true,
+  lethalForce: true,
 };
 
 const initialState = {

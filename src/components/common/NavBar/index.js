@@ -1,15 +1,12 @@
 import React from 'react';
-import '../../../styles/index.css';
+import './NavBar.css';
+import HrfLogo from './assets/hrf-logo.png';
 
 const NavBar = () => {
   return (
     <div className="logo-pane">
       <div className="company-info">
-        <img
-          src="https://www.humanrightsfirst.org/sites/default/files/hrf-logo.png"
-          alt="Human Rights First logo"
-        />
-        {/* <h2 style={{ margin: 0 }}>Human Rights First</h2> */}
+        <img src={HrfLogo} alt="Human Rights First logo" />
       </div>
       {/* <div className="user-nav">
         <button>Sign In</button>
