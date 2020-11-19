@@ -12,7 +12,7 @@ const months = [
   'November',
   'December',
 ];
-
+// One of the focuses of the previous group, not linked up to current data
 const incidentCategories = {
   labels: months,
   datasets: [

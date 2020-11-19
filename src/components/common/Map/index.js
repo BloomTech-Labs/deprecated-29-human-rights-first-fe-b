@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import * as mapboxgl from 'mapbox-gl';
 import statesDB from '../../../database/states.json';
@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import usZips from 'us-zips';
 import MapButtons from './MapButtons';
 import incidentsDB from '../../../database/data2.json';
-import TwitterPopup from '../TwitterPopup';
+import TwitterPopup from './TwitterPopup';
 import ReactDOM from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { policeBadge, policeHelmet } from '../../../assets/';
@@ -18,13 +18,16 @@ const Map = () => {
   // using a NYC API to get dummy data for display on the map
   // this will be replaced with our project's backend once it's ready
   let scrollEnabled = false; // toggles scroll zoom -- can't use useState because it rerenders the map
-  let stateJump = false;
   const [incidentRank, events] = useSelector(state => [
     state.filters.incidents,
     state.fetchIncidentsReducer.incidents,
   ]);
-
+  const stateJump = useRef(false);
+  const switchStateJump = () => {
+    stateJump.current = !stateJump.current;
+  };
   const [updatedIncidents, setUpdatedIncidents] = useState([]);
+
   const dispatch = useDispatch();
   // ----------- map
 
@@ -59,9 +62,6 @@ const Map = () => {
 
   // disable initial scrolling -- toggle it on and off with a button
   map.scrollZoom.disable();
-
-  // --------- converting json to geojson
-  const [geojson, setGeoJson] = useState([]);
 
   // Controls the parsing for the events that should be rendered
   useEffect(() => {
@@ -169,7 +169,7 @@ const Map = () => {
 
     // When the user moves over the states, we will update them -- using state's id
     map.on('mousemove', 'state-fills', function(e) {
-      if (stateJump) {
+      if (stateJump.current) {
         if (e.features.length > 0) {
           if (hoveredStateId) {
             map.setFeatureState(
@@ -201,7 +201,7 @@ const Map = () => {
       let currentState = statesDB.filter(state => {
         return state.state === e.features[0].properties.STATE_NAME;
       });
-      if (hoveredStateId && stateJump) {
+      if (hoveredStateId && stateJump.current) {
         map.flyTo({
           center: [currentState[0].longitude, currentState[0].latitude],
           zoom: 7,
@@ -403,29 +403,13 @@ const Map = () => {
     <>
       <div className="buttons">
         {/* this one button refuses to work when put into a different component */}
-        <Button
-          type="primary"
-          className="appear"
-          style={{
-            zIndex: 10,
-            position: 'absolute',
-            width: '200px',
-            marginTop: '34px',
-            display: 'none',
-            opacity: 0,
-          }}
-          onClick={() => {
-            if (stateJump) {
-              stateJump = false;
-            } else {
-              stateJump = true;
-            }
-          }}
-        >
-          Fast Travel States
-        </Button>
 
-        <MapButtons scrollEnabled={scrollEnabled} map={map} usZips={usZips} />
+        <MapButtons
+          scrollEnabled={scrollEnabled}
+          map={map}
+          usZips={usZips}
+          switchStateJump={switchStateJump}
+        />
       </div>
     </>
   );

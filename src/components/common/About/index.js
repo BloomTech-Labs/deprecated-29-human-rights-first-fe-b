@@ -25,9 +25,9 @@ export default function About() {
         </div>
         <Paragraph className="p">
           Human Rights First is an application designed to help you view and
-          study trends in police brutality incidents across the United States.
-          Our goal is to provide information regarding a variety of cases to the
-          public in an accurate and timely manner.
+          study trends in police use of force incidents across the United
+          States. Our goal is to provide information regarding a variety of
+          cases to the public in an accurate and timely manner.
         </Paragraph>
         <div className="about-feature">
           <Title

@@ -1,4 +1,5 @@
 /* Map component styling and general App styling*/
+/* We didn't implement CSS reset, if you choose to, prepare to deal with styling inconsistencies. */
 
 .map-container {
   width: 90%;
